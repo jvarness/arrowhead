@@ -1,9 +1,9 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "configurable"
     ],
-    "companyName": "jake.varness@gmail.com",
+    "companyName": "Jake Varness",
     "longName": "Arrowhead",
     "projectType": "native",
     "resources": {
@@ -11,9 +11,13 @@
     },
     "sdkVersion": "3",
     "shortName": "Arrowhead",
+    "targetPlatforms": [
+        "basalt",
+        "chalk"
+    ],
     "uuid": "2da44349-0393-49e3-b707-7d9e50b888c4",
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": false
+        "watchface": true
     }
 }
