@@ -1,10 +1,14 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "backgroundColor": 0,
+        "hourColor": 1,
+        "minuteColor": 2
+    },
     "capabilities": [
         "configurable"
     ],
     "companyName": "Jake Varness",
-    "enableMultiJS": false,
+    "enableMultiJS": true,
     "longName": "Arrowhead",
     "projectType": "native",
     "resources": {
