@@ -8,10 +8,10 @@ function loadOptions() {
   var $hour = $('#hourHandColor');
   var $minute = $('#minuteHandColor');
   
-  if (localStorage.options) {
-    $background[0].value = localStorage.options.backgroundColor;
-    $hour[0].value = localStorage.options.hourColor;
-    $minute[0].value = localStorage.options.minuteColor;
+  if (localStorage.backgroundColor) {
+    $background[0].value = localStorage.backgroundColor;
+    $hour[0].value = localStorage.hourColor;
+    $minute[0].value = localStorage.minuteColor;
   }
 }
 
@@ -32,7 +32,9 @@ function getAndStoreConfig() {
     hourColor: $hour.val()
   };
   
-  localStorage.options = options;
+  localStorage.backgroundColor = options.backgroundColor;
+  localStorage.minuteColor = options.minuteColor;
+  localStorage.hourColor = options.hourColor;
   
   return options;
 }
