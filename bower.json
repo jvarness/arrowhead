@@ -1,0 +1,22 @@
+{
+  "name": "arrowhead-config",
+  "homepage": "https://github.com/jvarness/arrowhead",
+  "authors": [
+    "Jake Varness <jake.varness@cerner.com>"
+  ],
+  "description": "Slate Configuration Page for Arrowhead",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Slate": "pebble-slate#^0.0.3"
+  }
+}
