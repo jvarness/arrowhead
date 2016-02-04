@@ -22,8 +22,8 @@ function submitHandler() {
 }
 
 function handleSubmit() {
-	var return_to = getQueryParam('return_to', 'pebblejs://close#');
-	document.location = return_to + encodeURIComponent(JSON.stringify(getAndStoreConfig()));
+  var return_to = getQueryParam('return_to', 'pebblejs://close#');
+  document.location = return_to + encodeURIComponent(JSON.stringify(getAndStoreConfig()));
 }
 
 function getQueryParam(variable, defaultValue) {
@@ -39,7 +39,7 @@ function getQueryParam(variable, defaultValue) {
 }
 
 function getAndStoreConfig() {
-	var $background = $('#backgroundColor');
+  var $background = $('#backgroundColor');
   var $hour = $('#hourHandColor');
   var $minute = $('#minuteHandColor');
   
