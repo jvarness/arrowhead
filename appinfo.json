@@ -8,7 +8,17 @@
     "longName": "Arrowhead",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/download.png",
+                "menuIcon": true,
+                "name": "MENU_PNG",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "Arrowhead",
