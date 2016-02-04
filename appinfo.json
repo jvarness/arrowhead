@@ -4,6 +4,7 @@
         "configurable"
     ],
     "companyName": "Jake Varness",
+    "enableMultiJS": false,
     "longName": "Arrowhead",
     "projectType": "native",
     "resources": {
