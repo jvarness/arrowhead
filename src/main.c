@@ -9,6 +9,7 @@ static Window *window;
 static Layer *triangle;
 static Layer *arrowhead;
 static Layer *battery_ind;
+static TextLayer *dials;
 static GPath *arrowhead_path;
 static GPath *triangle_path;
 static GPath *battery_ind_path;
@@ -93,6 +94,7 @@ static void arw_inbox_handler(DictionaryIterator *iterator, void *context) {
     persist_write_int(KEY_HOUR_COLOR, color);
     
     layer_mark_dirty(triangle);
+    text_layer_set_text_color(dials, GColorFromHEX(persist_read_int(KEY_HOUR_COLOR)));
   }
   
   if (minute_color_t) {
@@ -105,17 +107,25 @@ static void arw_inbox_handler(DictionaryIterator *iterator, void *context) {
   }
 }
 
-static void load_window(Window *win) {
+static void load_window(Window *win) {  
   Layer *layer = window_get_root_layer(window);
   GRect rect = layer_get_bounds(layer);
   triangle = layer_create(rect);
   arrowhead = layer_create(rect);
   battery_ind = layer_create(GRect(rect.size.w / 2 - 13, rect.size.h / 2 - 18, 26, 36));
   
+  dials = text_layer_create(GRect((rect.size.w / 2) - 10, 0, 25, 25));
+  text_layer_set_background_color(dials, GColorClear);
+  text_layer_set_text_color(dials, GColorFromHEX(persist_read_int(KEY_HOUR_COLOR)));
+  text_layer_set_font(dials, fonts_get_system_font(FONT_KEY_LECO_20_BOLD_NUMBERS));
+  text_layer_set_text_alignment(dials, GTextAlignmentCenter);
+  text_layer_set_text(dials, "12");
+  
   layer_set_update_proc(triangle, update_triangle);
   layer_set_update_proc(arrowhead, update_arrowhead);
   layer_set_update_proc(battery_ind, update_battery_ind);
   
+  layer_add_child(layer, text_layer_get_layer(dials));
   layer_add_child(layer, triangle);
   layer_add_child(layer, arrowhead);
   layer_add_child(layer, battery_ind);
@@ -125,6 +135,8 @@ static void unload_window(Window *win) {
   layer_destroy(triangle);
   layer_destroy(arrowhead);
   layer_destroy(battery_ind);
+  
+  text_layer_destroy(dials);
   
   gpath_destroy(triangle_path);
   gpath_destroy(arrowhead_path);
@@ -145,7 +157,19 @@ static void setup_battery_ind() {
   gpath_move_to(battery_ind_path, GPoint(13, 18));
 }
 
-static void arw_init() {
+static void check_defaults() {
+  if(!persist_exists(KEY_BG_COLOR)){
+    persist_write_int(KEY_BG_COLOR, 0xFFFFFF);
+  }
+  if(!persist_exists(KEY_MIN_COLOR)){
+    persist_write_int(KEY_MIN_COLOR, 0x0000FF);
+  }
+  if(!persist_exists(KEY_HOUR_COLOR)){
+    persist_write_int(KEY_HOUR_COLOR, 0xAA0000);
+  }
+}
+
+static void arw_init() {  
   window = window_create();
   
   window_set_window_handlers(window, (WindowHandlers) {
@@ -153,10 +177,13 @@ static void arw_init() {
     .unload = unload_window
   });
   
+  window_set_background_color(window, GColorFromHEX(persist_read_int(KEY_BG_COLOR)));
+  
   window_stack_push(window, true);
   
   app_message_register_inbox_received(arw_inbox_handler);
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  check_defaults();
   
   tick_timer_service_subscribe(MINUTE_UNIT, arw_minute_tick);
   battery_state_service_subscribe(update_battery);
