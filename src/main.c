@@ -41,11 +41,11 @@ static void update_arrowhead(Layer *arrowhead_layer, GContext *ctx) {
 static void update_battery_ind(Layer *triangle_layer, GContext *ctx) {
   GColor color = GColorWhite;
   
-  if(battery_level <= 100 && battery_level >= 50) {
+  if(battery_level <= 100 && battery_level > 50) {
     color = GColorCyan;
   }
-  else if (battery_level < 50 && battery_level > 20) {
-    color = GColorChromeYellow;
+  else if (battery_level <= 50 && battery_level > 20) {
+    color = GColorYellow;
   }
   else if (battery_level <= 20) {
     color = GColorRed;

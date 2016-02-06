@@ -12,7 +12,18 @@
     "longName": "Arrowhead",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/menu.png",
+                "menuIcon": true,
+                "name": "MENU",
+                "targetPlatforms": [
+                    "basalt",
+                    "chalk"
+                ],
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "Arrowhead",
