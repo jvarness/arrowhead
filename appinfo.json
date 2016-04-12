@@ -5,7 +5,8 @@
         "minuteColor": 2
     },
     "capabilities": [
-        "configurable"
+        "configurable",
+        "health"
     ],
     "companyName": "Jake Varness",
     "enableMultiJS": true,

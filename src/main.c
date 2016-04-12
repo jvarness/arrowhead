@@ -10,6 +10,7 @@ static Layer *triangle;
 static Layer *arrowhead;
 static Layer *battery_ind;
 static TextLayer *dials;
+static TextLayer *steps_text;
 static GPath *arrowhead_path;
 static GPath *triangle_path;
 static GPath *battery_ind_path;
@@ -70,6 +71,22 @@ static void update_time(struct tm *time) {
   layer_mark_dirty(arrowhead);
 }
 
+static void update_health() {
+  HealthValue step_metric = health_service_sum_today(HealthMetricStepCount);
+  int step_count = step_metric;
+    
+  static char buffer[] = "0000000";
+  snprintf(buffer, 7, "%d", step_count);
+  
+  text_layer_set_text(steps_text, buffer);
+}
+
+static void health_trigger(HealthEventType eventType, void * context) {
+  if(eventType == HealthEventMovementUpdate || eventType == HealthEventMovementUpdate) {
+    update_health();
+  }
+}
+
 static void arw_minute_tick(struct tm *time, TimeUnits units_changed) {
   update_time(time);
 }
@@ -104,6 +121,7 @@ static void arw_inbox_handler(DictionaryIterator *iterator, void *context) {
     
     layer_mark_dirty(arrowhead);
     layer_mark_dirty(battery_ind);
+    text_layer_set_text_color(steps_text, GColorFromHEX(persist_read_int(KEY_MIN_COLOR)));
   }
 }
 
@@ -121,14 +139,23 @@ static void load_window(Window *win) {
   text_layer_set_text_alignment(dials, GTextAlignmentCenter);
   text_layer_set_text(dials, "12");
   
+  steps_text = text_layer_create(GRect((rect.size.w / 2) - 50, rect.size.h - 25, 100, 25));
+  text_layer_set_background_color(steps_text, GColorClear);
+  text_layer_set_text_color(steps_text, GColorFromHEX(persist_read_int(KEY_MIN_COLOR)));
+  text_layer_set_font(steps_text, fonts_get_system_font(FONT_KEY_LECO_20_BOLD_NUMBERS));
+  text_layer_set_text_alignment(steps_text, GTextAlignmentCenter);
+  
   layer_set_update_proc(triangle, update_triangle);
   layer_set_update_proc(arrowhead, update_arrowhead);
   layer_set_update_proc(battery_ind, update_battery_ind);
   
   layer_add_child(layer, text_layer_get_layer(dials));
+  layer_add_child(layer, text_layer_get_layer(steps_text));
   layer_add_child(layer, triangle);
   layer_add_child(layer, arrowhead);
   layer_add_child(layer, battery_ind);
+  
+  update_health();
 }
 
 static void unload_window(Window *win) {
@@ -137,6 +164,7 @@ static void unload_window(Window *win) {
   layer_destroy(battery_ind);
   
   text_layer_destroy(dials);
+  text_layer_destroy(steps_text);
   
   gpath_destroy(triangle_path);
   gpath_destroy(arrowhead_path);
@@ -170,6 +198,8 @@ static void check_defaults() {
 }
 
 static void arw_init() {  
+  check_defaults();
+  
   window = window_create();
   
   window_set_window_handlers(window, (WindowHandlers) {
@@ -183,10 +213,10 @@ static void arw_init() {
   
   app_message_register_inbox_received(arw_inbox_handler);
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
-  check_defaults();
   
   tick_timer_service_subscribe(MINUTE_UNIT, arw_minute_tick);
   battery_state_service_subscribe(update_battery);
+  health_service_events_subscribe(health_trigger, NULL);
   
   setup_arrowhead_minute();
   setup_arrowhead_hour();
@@ -201,6 +231,7 @@ static void arw_deinit() {
   window_destroy(window);
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
+  health_service_events_unsubscribe();
   app_message_deregister_callbacks();
 }
 
